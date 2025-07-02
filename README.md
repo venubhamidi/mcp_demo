@@ -1,133 +1,56 @@
 # Enhanced MCP Customer Support Agent
 
-## Overview
+This project provides a multi-tool customer support agent that can use different LLM backends. You can run the agent with OpenAI (mcp_openai.py) or with IBM Granite via Replicate (mcp_granite.py).
 
-This project is a simulated, proactive customer support agent that can leverage either IBM Watsonx or OpenAI's GPT models (choose your backend) and a mock Multi-Channel Platform (MCP) API layer. It is designed to handle customer support scenarios for e-commerce businesses, including order status, payment issues, shipping delays, lost packages, refunds, and more. The agent takes immediate action to resolve customer issues and always sends a follow-up email notification.
+## Features
+- Proactive customer support agent that takes real action (refunds, shipping, emails, etc.)
+- Multi-step tool use and reasoning
+- Mock Shopify, Stripe, and Email API layers
+- Interactive CLI chat interface
 
-**Key Features:**
-- Proactive, action-oriented customer support agent
-- Simulated integration with Shopify (orders), Stripe (payments), and email (notifications)
-- Mock data for realistic customer support scenarios
-- Automatic planning and execution of multi-step support workflows
-- Always includes at least one action (refund, credit, shipping upgrade, etc.) and an email notification
-- Interactive CLI chat interface for demo and testing
-- **Supports both IBM Watsonx and OpenAI backends**
+## Quick Start
 
----
-
-## Running with IBM Watsonx (`mcp_watsonx.py`)
-
-### Requirements
-- Python 3.8+
-- IBM Watsonx credentials (API key, project ID, URL)
-
-### Python Dependencies
-Listed in `requirements.txt`:
-```
-openai==1.12.0 
-httpx==0.24.1
-python-dotenv
-ibm-watson-machine-learning>=1.0.335
-```
-Install with:
+### 1. Clone the repository and install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Setup
-1. **Clone the repository** and navigate to the project directory.
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Set your Watsonx environment variables:**
-   Create a `.env` file in the project root with the following keys:
-   ```env
-   WATSONX_APIKEY=your-watsonx-api-key
-   WATSONX_PROJECT_ID=your-watsonx-project-id
-   WATSONX_URL=https://your-region.ml.cloud.ibm.com
-   # Optional: override the default model
-   WATSONX_MODEL_ID=ibm/granite-13b-chat-v2
-   ```
-   Or export them in your shell:
-   ```bash
-   export WATSONX_APIKEY=your-watsonx-api-key
-   export WATSONX_PROJECT_ID=your-watsonx-project-id
-   export WATSONX_URL=https://your-region.ml.cloud.ibm.com
-   export WATSONX_MODEL_ID=ibm/granite-13b-chat-v2
-   ```
+### 2. Set up your environment variables
+Create a `.env` file in the project root with the following for Replicate/Granite:
+```
+REPLICATE_API_TOKEN=your_replicate_token_here
+```
 
-### Usage
-Run the Watsonx-powered agent:
+For OpenAI (if you want to use mcp_openai.py):
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+### 3. Run the agent
+
+#### To use IBM Granite via Replicate:
 ```bash
-python mcp_watsonx.py
+python3 mcp_granite.py
 ```
 
-You will see a demo of available customers and sample queries. Enter a customer email (or use the demo email) and type your support request. The agent will:
-- Plan a sequence of tool calls (find customer, check payment, take action, send email)
-- Simulate API calls to Shopify, Stripe, and email
-- Take immediate action to resolve the issue
-- Always send a follow-up email notification
-- Respond with a confident, action-oriented message
-
----
-
-## Running with OpenAI (`mcp_openai.py`)
-
-### Requirements
-- Python 3.8+
-- OpenAI API key
-
-### Python Dependencies
-Listed in `requirements.txt`:
-```
-openai==1.12.0 
-httpx==0.24.1
-python-dotenv
-
-```
-Install with:
+#### To use OpenAI (GPT-4o):
 ```bash
-pip install -r requirements.txt
+python3 mcp_openai.py
 ```
 
-### Setup
-1. **Clone the repository** and navigate to the project directory.
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Set your OpenAI API key:**
-   Export your OpenAI API key as an environment variable:
-   ```bash
-   export OPENAI_API_KEY='your-api-key-here'
-   ```
+## About mcp_granite.py
+- Uses the [Replicate](https://replicate.com/) API to access IBM Granite LLMs.
+- No client instantiation needed; just set the `REPLICATE_API_TOKEN` in your `.env`.
+- The logic and interface are identical to mcp_openai.py, but the LLM backend is IBM Granite.
 
-### Usage
-Run the main script:
-```bash
-python mcp_openai.py
+## .env Example
+```
+REPLICATE_API_TOKEN=your_replicate_token_here
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-You will see a demo of available customers and sample queries. Enter a customer email (or use the demo email) and type your support request. The agent will:
-- Plan a sequence of tool calls (find customer, check payment, take action, send email)
-- Simulate API calls to Shopify, Stripe, and email
-- Take immediate action to resolve the issue
-- Always send a follow-up email notification
-- Respond with a confident, action-oriented message
-
----
-
-## Customization
-- The mock data and tool logic can be extended in `mcp_openai.py` or `mcp_watsonx.py`.
-- The agent's planning and synthesis prompts can be modified for different support styles.
-
-## Notes
-- This project is for demonstration and prototyping purposes. No real API calls are made; all data is simulated.
-- Requires a valid OpenAI or Watsonx API key for chat completions.
+## .gitignore
+A sample .gitignore is provided to avoid committing secrets and virtual environments.
 
 ## License
-MIT License # mcp-demo
-# mcp_demo
-# mcp_demo
-# mcp_demo
+MIT
