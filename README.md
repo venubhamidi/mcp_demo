@@ -1,6 +1,6 @@
 # Enhanced MCP Customer Support Agent
 
-This project provides a multi-tool customer support agent that can use different LLM backends. You can run the agent with OpenAI (mcp_openai.py) or with IBM Granite via Replicate (mcp_granite.py).
+This project provides a multi-tool customer support agent that can use different LLM backends. You can run the agent with IBM Granite via Replicate (mcp_granite.py) or OpenAI (mcp_openai.py).
 
 ## Features
 - Proactive customer support agent that takes real action (refunds, shipping, emails, etc.)
