@@ -334,7 +334,7 @@ class UnifiedCustomerSupportAgent:
         customer = execution_results.get("shopify-server.find_customer")
         if resolved.get("customer_name") == "{{customer_name}}":
             resolved["customer_name"] = customer.get("first_name", "Valued Customer") if customer else "Valued Customer"
-        if resolved.get("order_number") == "{{order_number}}":
+        if resolved.get("order_number") in ("{{order_number}}", "unknown", "ORDER_NUMBER_PLACEHOLDER"):
             order = execution_results.get("shopify-server.get_order_status")
             if order:
                 resolved["order_number"] = order.get("order_number", "Unknown")
@@ -342,7 +342,15 @@ class UnifiedCustomerSupportAgent:
                 resolved["order_number"] = customer["orders"][0].get("order_number", "Unknown")
             else:
                 resolved["order_number"] = "General Inquiry"
-        if resolved.get("customer_id") == "{{customer_id}}":
+        if resolved.get("order_id") in ("{{order_id}}", "unknown", "ORDER_NUMBER_PLACEHOLDER"):
+            order = execution_results.get("shopify-server.get_order_status")
+            if order:
+                resolved["order_id"] = order.get("id", "unknown")
+            elif customer and customer.get("orders"):
+                resolved["order_id"] = customer["orders"][0].get("id", "unknown")
+            else:
+                resolved["order_id"] = "unknown"
+        if resolved.get("customer_id") in ("{{customer_id}}", "unknown", "ORDER_NUMBER_PLACEHOLDER"):
             resolved["customer_id"] = customer.get("id", "unknown") if customer else "unknown"
         return resolved
 
@@ -358,14 +366,15 @@ Customer email: {customer_email}
 
 You are EMPOWERED to take immediate action to solve customer problems. Plan a comprehensive response that includes:
 1. Information gathering (shopify-server.find_customer, get_order_status, stripe-server.get_customer_payments)
-2. PROACTIVE PROBLEM SOLVING with action-server tools:
-   - For payment failures: retry_payment, apply_credit  
-   - For shipping delays: upgrade_shipping
-   - For lost packages: ship_replacement, apply_credit
-   - For cancellations: process_refund
-   - For happy customers: enable_vip_status, apply_credit
+2. PROACTIVE PROBLEM SOLVING with action-server tools based on order status:
+   - For \"payment_failed\": retry_payment, apply_credit  
+   - For \"shipping_delayed\": upgrade_shipping, apply_credit
+   - For \"lost_in_transit\": ship_replacement, apply_credit
+   - For \"cancelled_by_customer\": process_refund
+   - For \"delivered\" or happy customers: enable_vip_status, apply_credit
 3. Enhanced communication (email-server.send_order_update)
 
+IMPORTANT: First gather customer and order data to determine the correct order status. **After you know the order status, ONLY include the single action-server tool that matches the actual status. Do NOT include all possible actions.**
 ALWAYS include at least one action-server tool to proactively solve the customer's problem.
 ALWAYS end with email notification.
 
